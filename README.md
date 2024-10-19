@@ -34,6 +34,14 @@ some useful scripts to run the project
 ### Test the lambda
 just call the api from your local with the correct authorizer method:
 
+run: 
+```bash
+  bun run build && bun run start
+```
+**make sure you're running docker**
+
+then:
+
 ```bash
 curl --header "Authorization: Bearer valid-token" \
   --request POST \
