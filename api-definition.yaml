@@ -1,0 +1,30 @@
+swagger: "2.0"
+info:
+  title: "API with Lambda Authorizer"
+  version: "1.0"
+
+paths:
+  /baselambda:
+    post:
+      x-amazon-apigateway-integration:
+        uri: 
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${BaseLambda.Arn}/invocations
+        httpMethod: POST
+        type: aws_proxy
+      security:
+        - LambdaAuth: []
+      responses:
+        200:
+          description: OK
+
+securityDefinitions:
+  LambdaAuth:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+    x-amazon-apigateway-authorizer:
+      type: "request"
+      authorizerUri: 
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthLambda.Arn}/invocations
+      identitySource: "method.request.header.Authorization"
+      authorizerResultTtlInSeconds: 0

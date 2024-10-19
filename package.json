@@ -1,0 +1,23 @@
+{
+  "name": "bun-lambda-with-authorizer",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "clean": "rm -rf build",
+    "build": "bun --env-file=.env scripts/build.ts",
+    "start": "bun --env-file=.env scripts/run.ts",
+    "deploy": "bun --env-file=.env scripts/deploy.ts",
+    "release": "bun run build && bun run deploy"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145",
+    "@types/bun": "latest",
+    "aws4fetch": "^1.0.20"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "aws-lambda": "^1.0.7"
+  }
+}

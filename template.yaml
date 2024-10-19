@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Base infrastructure with authorization Lambda, API Gateway, and base Lambda
+
+Parameters:
+  FolderRoot:
+    Type: String
+    Default: build
+
+Globals:
+  Function:
+    Environment:
+      Variables:
+        AWS_XRAY_CONTEXT_MISSING: LOG_ERROR
+        AWS_XRAY_LOG_LEVEL: silent
+
+Resources:
+
+  BunLayer:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      Content: ./bun-layer
+      CompatibleRuntimes:
+        - provided.al2
+      Description: Layer containing Bun.js runtime
+
+  AuthLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.fetch
+      Runtime: provided.al2
+      CodeUri: !Sub ${FolderRoot}/auth-lambda/
+      Tracing: Active
+      Environment:
+        # Variables:
+        # Add your environment variables here
+      Layers:
+        - !Ref BunLayer
+
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: ./api-definition.yaml
+
+  BaseLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.fetch
+      Runtime: provided.al2
+      CodeUri: !Sub ${FolderRoot}/base-lambda/
+      Tracing: Active
+      Environment:
+        # Variables:
+        # Add your environment variables here
+      Layers:
+        - !Ref BunLayer
+      Events:
+        BaseLambdaPost:
+          Type: Api
+          Properties:
+            Path: /baselambda
+            Method: POST
+            RestApiId: !Ref ApiGateway
+            Auth:
+              Authorizer: LambdaAuth
+
+Outputs:
+  AuthLambdaArn:
+    Description: Authorization Lambda ARN
+    Value: !GetAtt AuthLambda.Arn
+  ApiGatewayEndpoint:
+    Description: API Gateway Endpoint URL
+    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
