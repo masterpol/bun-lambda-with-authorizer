@@ -17,8 +17,9 @@ Use bun lambda runtime with Authorizer function using a local fork of bun, using
 main functions are defined in `functions/` folder but were built for use in the template.
 
 **Important**
-you need to run `sam init` in the root folder and specify `1 - AWS Quick Start Templates` with the template location `template.yaml`.
-
+- you need to run `sam init` in the root folder and specify `1 - AWS Quick Start Templates` with the template location `template.yaml`.
+- you need to add the bun runtime from `bun/packages/bun-lambda/bun`.
+  
 ### Env
 you can define whatever you need in .env file
 
