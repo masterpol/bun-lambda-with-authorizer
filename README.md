@@ -22,7 +22,7 @@ you need to run `sam init` in the root folder and specify `1 - AWS Quick Start T
 ### Env
 you can define whatever you need in .env file
 
-### scripts 
+### Scripts 
 some useful scripts to run the project
 
 - `bun start` 
@@ -38,3 +38,21 @@ curl --header "Authorization: Bearer valid-token" \
   --request POST \
   http://<api-gateway-endpoint>/baselambda 
 ```
+
+### Changes made in the runtime 
+
+```bash
+  bun-layer/runtime.ts # this is a copy from packages/bun-lambda/runtime.ts
+``` 
+
+the main issue with the runtime with the authorizer is the default authorizer function needs to return a policy as an object and not as a response as is responded today in the fetch api: [example](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-lambda-authorizer-output.html)
+
+**the solution to support this**:
+
+1. add types for the response `AuthorizerResultContext`, `APIGatewayAuthorizerResult`.
+2. Extend fetch API to support those types.
+3. check in `#acceptRequest` if the request has `event.event?.methodArn` this means the function is an authorizer.
+4. create a new handler for this kind of request `authorizerFetch` this response the need it policy.
+
+
+**I ❤️ Bun**
