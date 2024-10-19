@@ -87,7 +87,7 @@ function env(name: string, fallback?: string): string {
 
 const runtimeUrl = new URL(`http://${env("AWS_LAMBDA_RUNTIME_API")}/2018-06-01/`);
 
-async function fetch(url: string, options?: RequestInit): Promise<Response | APIGatewayAuthorizerResult> {
+async function fetch(url: string, options?: RequestInit): Promise<Response> {
   const { href } = new URL(url, runtimeUrl);
   const response = await globalThis.fetch(href, {
     ...options,
