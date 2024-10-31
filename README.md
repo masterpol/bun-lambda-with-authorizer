@@ -18,7 +18,7 @@ main functions are defined in `functions/` folder but were built for use in the 
 
 **Important**
 - you need to run `sam init` in the root folder and specify `1 - AWS Quick Start Templates` with the template location `template.yaml`.
-- you need to add the bun runtime from `bun/packages/bun-lambda/bun`.
+- you need to add the bun runtime from `bun/packages/bun-lambda/bun` to `./bun-layer`.
   
 ### Env
 you can define whatever you need in .env file
